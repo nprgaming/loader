@@ -4,7 +4,7 @@
 
     function launch(link) {
       try {
-        fetch(link+?"t="+Date.now())
+        fetch(link+"?t="+Date.now())
           .then(response => response.text())
           .then(html => {
                 document.documentElement.innerHTML = html;
