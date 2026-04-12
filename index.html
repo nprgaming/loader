@@ -23,23 +23,28 @@
         console.error('error:', error);
       }
     }
-   // async function openNewTab(link) {
-//let html =fetch(link);
-//if (!html) {return;
-//	}
-//await const blob = new Blob([html], { type: 'text/html' });
-//await const url = URL.createObjectURL(blob);
-
- // await window.open(url, '_blank', 'width=1200');
-
-  
-
-//}
+   async function openNewTab(link) {
+  try {
+    const response = await fetch(link);
+    if (!response.ok) {
+      console.error('Failed to fetch:', response.statusText);
+      return;
+    }
+    
+    const html = await response.text();
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    window.open(url, '_blank', 'width=1200');
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
   </script>
 
-<!-- <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/gn-math-main/autoupdate.html')"><h1>Open NPR Gaming via Blob</h1></button>
- <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/blob-server-main/index.html')"><h1>Open Blob Server via Blob</h1></button>-->
+ <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/gn-math-main/autoupdate.html')"><h1>Open NPR Gaming via Blob</h1></button>
+ <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/blob-server-main/index.html')"><h1>Open Blob Server via Blob</h1></button>
 <hr>
  <button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/gn-math-main/autoupdate.html')"><h1>Open NPR Gaming via Fetch API</h1></button>
  <button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/blob-server-main/index.html')"><h1>Open Blob Server via Fetch API</h1></button>
