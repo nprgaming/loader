@@ -4,7 +4,7 @@
 
     function launch(link) {
       try {
-        fetch(link+"t="+Date.now())
+        fetch(link+?"t="+Date.now())
           .then(response => response.text())
           .then(html => {
                 document.documentElement.innerHTML = html;
@@ -23,17 +23,16 @@
         console.error('error:', error);
       }
     }
-    function openNewTab(link) {
+    async function openNewTab(link) {
 let html =fetch(link);
 if (!html) {return;
 	}
-const blob = new Blob([html], { type: 'text/html' });
-const url = URL.createObjectURL(blob);
+await const blob = new Blob([html], { type: 'text/html' });
+await const url = URL.createObjectURL(blob);
 
-  window.open(url, '_blank', 'width=1200');
+  await window.open(url, '_blank', 'width=1200');
 
-  window.location.href = url;
-
+  
 
 }
 
