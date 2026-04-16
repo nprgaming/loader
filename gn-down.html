@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NPR GAMING - UI Test</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Outfit', sans-serif; }
+
+    html, body { height: 100%; background:linear-gradient(135deg, rgb(255,255,255),rgb(0,0,0))}
+
+    #zoneViewer {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+    }
+
+    #zoneViewer.active {
+      display: flex;
+    }
+
+    #zoneViewerHeader {
+      padding: 16px 20px;
+      background-color: #1a1a2e;
+      border-bottom: 1px solid #2a2a3e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #zoneViewerTitle {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f0f0f5;
+    }
+
+    #zoneViewerClose {
+      padding: 8px 16px;
+      background-color: #eab308;
+      color: #0f0f1a;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #zoneViewerClose:hover {
+      background-color: #f5c933;
+    }
+
+    #zoneFrame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background-color: #0f0f1a;
+    }
+
+    .card-enter {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: cardIn 0.5s ease forwards;
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cover-img {
+      transition: transform 0.4s ease;
+    }
+
+    .zone-card:hover .cover-img {
+      transform: scale(1.08);
+    }
+
+    .zone-card {
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .zone-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, #1e1e2e 25%, #2a2a3e 50%, #1e1e2e 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .search-input:focus {
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.25);
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f0f1a; }
+    ::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a3a4e; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full">
+  <div id="zoneViewer">
+   <div id="zoneViewerHeader">
+    <h2 id="zoneViewerTitle">Zone Viewer</h2>
+    <button id="zoneViewerClose"><i data-lucide="x" style="width:16px;height:16px;"></i> Close</button>
+    <button onclick="fullscreenZone();" style="padding: 8px 16px;background-color: #eab308;color: #0f0f1a;border: none;border-radius: 6px;font-size: 14px;font-weight: 600;cursor: pointer;transition: background-color 0.2s;display: flex;align-items: center;gap: 6px;"><i data-lucide="flame" style="width:16px;height:16px;"></i>Fullscreen</button>
+   </div><iframe id="zoneFrame"></iframe>
+  </div>
+  <div id="app" class="w-full h-full overflow-auto" style="background-color: #0f0f1a;">
+   <header class="w-full px-6 pt-10 pb-6 text-center">
+    <div class="flex items-center justify-center gap-3 mb-2">
+     <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #eab308;"><i data-lucide="code-xml" style="width:20px;height:20px;color:#0f0f1a;"></i>
+     </div>
+     <h1 id="page-title" class="text-3xl md:text-4xl font-bold" style="color: #f0f0f5;">NPR Gaming (Ads Removed)</h1>
+    </div>
+    <p id="subtitle" class="text-base font-light mt-1" style="color: #8888a0;">Browse the complete collection</p>
+   </header>
+   <div class="w-full max-w-5xl mx-auto px-6 mb-6 flex flex-col sm:flex-row items-center gap-3">
+    <div class="relative flex-1 w-full"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2" style="width:18px;height:18px;color:#8888a0;"></i> <input id="search" type="text" placeholder="Search by name or author..." class="search-input w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm outline-none transition-all" style="background-color: #1a1a2e; border-color: #2a2a3e; color: #f0f0f5;">
+    </div><span id="count-badge" class="text-xs font-medium px-3 py-1.5 rounded-full whitespace-nowrap" style="background-color: #1a1a2e; color: #eab308; border: 1px solid #2a2a3e;">Loading...</span>
+   </div>
+   <main id="grid" class="w-full max-w-5xl mx-auto px-6 pb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="shimmer rounded-xl h-72"></div>
+    <div class="shimmer rounded-xl h-72"></div>
+    <div class="shimmer rounded-xl h-72"></div>
+    <div class="shimmer rounded-xl h-72"></div>
+    <div class="shimmer rounded-xl h-72"></div>
+    <div class="shimmer rounded-xl h-72"></div>
+   </main>
+   <div id="empty-state" class="hidden w-full text-center py-16 px-6"><i data-lucide="search-x" style="width:48px;height:48px;color:#8888a0;margin:0 auto 12px;display:block;"></i>
+    <p class="text-lg font-medium" style="color: #f0f0f5;">No zones found</p>
+    <p class="text-sm mt-1" style="color: #8888a0;">Try a different search term</p>
+   </div>
+   <div id="error-state" class="hidden w-full text-center py-16 px-6"><i data-lucide="alert-triangle" style="width:48px;height:48px;color:#ef4444;margin:0 auto 12px;display:block;"></i>
+    <p id="error-msg" class="text-lg font-medium" style="color: #f0f0f5;">Failed to load data</p><button id="retry-btn" class="mt-4 px-5 py-2 rounded-lg text-sm font-medium transition-colors" style="background-color: #eab308; color: #0f0f1a;">Retry</button>
+   </div>
+  </div>
+  <script>
+    let allZones = [];
+    let filteredZones = [];
+
+    const config = {
+      background_color: 'linear-gradient(90deg, rgb(255,255,255) 0%, rgb(0,0,0) 5%, rgb(100,0,200) 50%, rgb(0,0,0) 95%, rgb(255,255,255) 100%',
+      surface_color: '#1a1a2e',
+      text_color: 'rgb(255,255,255)',
+      primary_action_color: '#eab308',
+      secondary_action_color: 'rgb(100,200,100)',
+      page_title: 'NPR Gaming (Ads Removed, UI Test, Simplified Code)',
+      subtitle: 'Beta'
+    };
+    
+    function fullscreenZone() {
+        if (zoneFrame.requestFullscreen) {
+        zoneFrame.requestFullscreen();
+    } else if (zoneFrame.mozRequestFullScreen) {
+        zoneFrame.mozRequestFullScreen();
+    } else if (zoneFrame.webkitRequestFullscreen) {
+        zoneFrame.webkitRequestFullscreen();
+    } else if (zoneFrame.msRequestFullscreen) {
+        zoneFrame.msRequestFullscreen();
+    }
+    }
+
+    function applyConfig() {
+      const bg = config.background_color;
+      const surface = config.surface_color;
+      const text = config.text_color;
+      const primary = config.primary_action_color;
+
+      document.getElementById('app').style.background = bg;
+      document.getElementById('page-title').textContent = config.page_title;
+      document.getElementById('page-title').style.color = text;
+      document.getElementById('subtitle').textContent = config.subtitle;
+      document.getElementById('subtitle').style.color = config.secondary_action_color;
+
+      const iconBox = document.querySelector('header .rounded-lg');
+      if (iconBox) iconBox.style.backgroundColor = primary;
+
+      const search = document.getElementById('search');
+      search.style.backgroundColor = surface;
+      search.style.borderColor = surface;
+      search.style.color = text;
+
+      const badge = document.getElementById('count-badge');
+      badge.style.backgroundColor = surface;
+      badge.style.color = primary;
+      badge.style.borderColor = surface;
+
+      const retryBtn = document.getElementById('retry-btn');
+      retryBtn.style.backgroundColor = primary;
+
+      document.querySelectorAll('.zone-card').forEach(card => {
+        card.style.backgroundColor = surface;
+        const nameEl = card.querySelector('.zone-name');
+        if (nameEl) nameEl.style.color = text;
+        const authorEl = card.querySelector('.zone-author');
+        if (authorEl) authorEl.style.color = config.secondary_action_color;
+      });
+    }
+
+    function createCard(zone, index) {
+      const surface = config.surface_color;
+      const text = config.text_color;
+      const secondary = config.secondary_action_color;
+
+      const card = document.createElement('div');
+      card.className = 'zone-card card-enter rounded-xl overflow-hidden cursor-pointer';
+      card.style.backgroundColor = surface;
+      card.style.animationDelay = `${index * 0.06}s`;
+      card.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3)';
+      card.dataset.zoneId = zone.name;
+      card.addEventListener('click', openFile);
+
+      const coverUrl = zone.cover ? zone.cover.replace('{COVER_URL}', `https://cdn.jsdelivr.net/gh/nprgaming/gn-math-covers@main`) : '';
+      card.innerHTML = `
+        <div class="relative overflow-hidden h-44 bg-gradient-to-br from-gray-800 to-gray-900">
+          ${coverUrl ? `<img src="${coverUrl}" alt="${zone.name}" loading="lazy" class="cover-img w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full\\'><span style=\\'font-size:48px;\\'>🗺️</span></div>';">` : `<div class="flex items-center justify-center h-full"><span style="font-size:48px;">🗺️</span></div>`}
+        </div>
+        <div class="p-4">
+          <h3 class="zone-name font-semibold truncate" style="color:${text};">${escapeHTML(zone.name || 'Untitled')}</h3>
+          <div class="flex items-center gap-1.5 mt-1.5">
+            <i data-lucide="user" style="width:14px;height:14px;color:${secondary};flex-shrink:0;"></i>
+            <p class="zone-author text-sm truncate" style="color:${secondary};">${escapeHTML(zone.author || 'Unknown')}</p>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function openFile(event) {
+      const zoneViewerTitle=document.getElementById('zoneViewerTitle');
+      const zoneViewer = document.getElementById('zoneViewer');
+      const zoneFrame = document.getElementById('zoneFrame');
+      const card = event.currentTarget;
+      const zoneName = card.dataset.zoneId;
+      const zone = allZones.find(z => z.name === zoneName);
+zoneViewerTitle.textContent=zone.name;
+      if (!zone || !zone.url) return;
+      const htmlURL = `https://cdn.jsdelivr.net/gh/nprgaming/gn-math-html@main`;
+
+      fetch(zone.url.replace("{HTML_URL}", htmlURL) + "?t=" + Date.now())
+        .then(response => response.text())
+        .then(html => {
+          zoneFrame.srcdoc = html.replaceAll(`iframe`,"").replaceAll(`✕`,"");
+          zoneViewer.classList.add('active');
+          let code123=html;
+          
+        })
+        .catch(err => console.error('Failed to load zone:', err));
+        
+    
+    
+    }
+
+    function renderCards(zones) {
+      const grid = document.getElementById('grid');
+      const empty = document.getElementById('empty-state');
+      grid.innerHTML = '';
+
+      if (zones.length === 0) {
+        empty.classList.remove('hidden');
+        grid.classList.add('hidden');
+      } else {
+        empty.classList.add('hidden');
+        grid.classList.remove('hidden');
+        const sorted = [...zones].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        sorted.forEach((z, i) => grid.appendChild(createCard(z, i)));
+        lucide.createIcons();
+      }
+
+      const badge = document.getElementById('count-badge');
+      badge.textContent = `${zones.length} zone${zones.length !== 1 ? 's' : ''}`;
+    }
+
+    async function loadData() {
+      const grid = document.getElementById('grid');
+      const error = document.getElementById('error-state');
+      error.classList.add('hidden');
+      grid.classList.remove('hidden');
+      grid.innerHTML = '<div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div>';
+
+      try {
+        const res = await fetch(`https://cdn.jsdelivr.net/gh/nprgaming/gn-math-assets@main/zones.json`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        allZones = Array.isArray(data) ? data : [];
+        filteredZones = [...allZones];
+        renderCards(filteredZones);
+      } catch (e) {
+        console.error('Fetch error:', e);
+        grid.classList.add('hidden');
+        error.classList.remove('hidden');
+        document.getElementById('error-msg').textContent = 'Failed to load zones data';
+        document.getElementById('count-badge').textContent = 'Error';
+      }
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        filteredZones = [...allZones];
+      } else {
+        filteredZones = allZones.filter(z =>
+          (z.name || '').toLowerCase().includes(q) ||
+          (z.author || '').toLowerCase().includes(q)
+        );
+      }
+      renderCards(filteredZones);
+    });
+
+    document.getElementById('retry-btn').addEventListener('click', loadData);
+
+    document.getElementById('zoneViewerClose').addEventListener('click', () => {
+      document.getElementById('zoneViewer').classList.remove('active');
+      document.getElementById('zoneFrame').srcdoc = '';
+    });
+
+    lucide.createIcons();
+    loadData();
+    applyConfig();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dd6fe1ee6788346',t:'MTc3MzY5ODAyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+
