@@ -6,10 +6,11 @@
     }
     html{
         background: #000000;
+        color:#ffffff;
     }
 </style>
 <script>
-
+Notification.requestPermission();
 
     function launch(link) {
       try {
@@ -51,7 +52,7 @@
 }
 
   </script>
-
+<h1>Please enable notifications.</h1>
  <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/gn-math-main/autoupdate.html')"><h1>Open NPR Gaming via Blob</h1></button>
  <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/blob-server-main/index.html')"><h1>Open Blob Server via Blob</h1></button>
 <hr>
