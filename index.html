@@ -8,6 +8,9 @@
         background: #000000;
         color:#ffffff;
     }
+    .hidden{
+        display:none;
+    }
 </style>
 <script>
 Notification.requestPermission();
@@ -53,14 +56,14 @@ Notification.requestPermission();
 
   </script>
 <h1>Please enable notifications.</h1>
- <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/gn-math-main/autoupdate.html')"><h1>Open NPR Gaming via Blob</h1></button>
+ <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/npr-gaming-main/index.html')"><h1>Open NPR Gaming via Blob</h1></button>
  <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/blob-server-main/index.html')"><h1>Open Blob Server via Blob</h1></button>
 <hr>
- <button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/gn-math-main/autoupdate.html')"><h1>Open NPR Gaming via Fetch API</h1></button>
+ <button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/npr-gaming-main/index.html')"><h1>Open NPR Gaming via Fetch API</h1></button>
  <button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/blob-server-main/index.html')"><h1>Open Blob Server via Fetch API</h1></button>
 <hr>
 <hr>
-NPR Gaming is currently <b>down</b>. For NPR Gaming Basic, use buttons below. Thanks! Algebra1
+<div class="hidden">NPR Gaming is currently <b>down</b>. For NPR Gaming Basic, use buttons below. Thanks! Algebra1</div>
 <hr>
-<button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/loader/gn-down.html')"><h1>Open NPR Gaming Basic via Fetch API</h1></button>
- <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/loader/gn-down.html')"><h1>Open NPR Gaming Basic Server via Blob</h1></button>
+<button onclick="launch('https://cdn.jsdelivr.net/gh/nprgaming/loader/gn-down.html')" class="hidden"><h1>Open NPR Gaming Basic via Fetch API</h1></button>
+ <button onclick="openNewTab('https://cdn.jsdelivr.net/gh/nprgaming/loader/gn-down.html')" class="hidden"><h1>Open NPR Gaming Basic Server via Blob</h1></button>
