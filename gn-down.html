@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NPR GAMING - UI Test</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://esm.sh/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Outfit', sans-serif; }
@@ -226,7 +226,7 @@
       card.dataset.zoneId = zone.name;
       card.addEventListener('click', openFile);
 
-      const coverUrl = zone.cover ? zone.cover.replace('{COVER_URL}', `https://cdn.jsdelivr.net/gh/nprgaming/gn-math-covers@main`) : '';
+      const coverUrl = zone.cover ? zone.cover.replace('{COVER_URL}', `https://esm.sh/gh/nprgaming/gn-math-covers@main`) : '';
       card.innerHTML = `
         <div class="relative overflow-hidden h-44 bg-gradient-to-br from-gray-800 to-gray-900">
           ${coverUrl ? `<img src="${coverUrl}" alt="${zone.name}" loading="lazy" class="cover-img w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full\\'><span style=\\'font-size:48px;\\'>🗺️</span></div>';">` : `<div class="flex items-center justify-center h-full"><span style="font-size:48px;">🗺️</span></div>`}
@@ -257,7 +257,7 @@
       const zone = allZones.find(z => z.name === zoneName);
 zoneViewerTitle.textContent=zone.name;
       if (!zone || !zone.url) return;
-      const htmlURL = `https://cdn.jsdelivr.net/gh/nprgaming/gn-math-html@main`;
+      const htmlURL = `https://esm.sh/gh/nprgaming/gn-math-html@main`;
 
       fetch(zone.url.replace("{HTML_URL}", htmlURL) + "?t=" + Date.now())
         .then(response => response.text())
@@ -301,7 +301,7 @@ zoneViewerTitle.textContent=zone.name;
       grid.innerHTML = '<div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div><div class="shimmer rounded-xl h-72"></div>';
 
       try {
-        const res = await fetch(`https://cdn.jsdelivr.net/gh/nprgaming/gn-math-assets@main/zones.json`);
+        const res = await fetch(`https://esm.sh/gh/nprgaming/gn-math-assets@main/zones.json`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         allZones = Array.isArray(data) ? data : [];
